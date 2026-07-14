@@ -74,9 +74,22 @@ pip install pyyaml
 /es-coach                     对话式批改 ES
 ```
 
-## 蒸馏知识、素材存在哪里?
+## 素材怎么积累起来(两条补给路径)
 
-存在 `vault.paths.env` 里指定的 vault 中,随着你就活的推进逐步积累。本仓库只包含逻辑(Skill 的指令文本和辅助脚本),不含你任何具体的企业选考内容或 ES 实际数据。
+这套系统不会放着不管就自己变聪明。需要你自己去跑下面两件事,`vault.paths.env` 里指定的 vault 中的蒸馏知识、本人素材才会逐步长起来。本仓库只包含逻辑(Skill 的指令文本和辅助脚本),不含你任何具体的企业选考内容或 ES 实际数据。
+
+### ① 本人经历(素材/本人/)——跑 grill,或者自己写日记
+
+- 最省事的方式是 `/shukatsu-distill grill`,靠 Claude 一问一答(反向面试)帮你挖出来。
+- 除此之外,**平时在 Obsidian 里写日记/日志**也是一条有效的补给路径。自我分析、ガクチカ候补、价值观变化之类的内容不用刻意打磨,随手记下来就行。
+  - 如果想让 `distill` 模式自动捡到这些内容,需要把日记里相关的部分复制成 `VAULT_SHUKATSU_SOZAI_SELF`(素材/本人/)目录下的一个文件,并配上和 `grill` 输出一样的 frontmatter(`source_type: 本人` / `distilled: false` 等)——因为 distill 是靠 grep `distilled: false` 来发现新素材的。
+  - 不配 frontmatter 的话,`es-coach` 的 Phase 4 依然会直接 `ls` 素材/本人/ 目录去读,但不会被 `distill` 汇入蒸馏知识文件(因为没有 frontmatter 标记)。
+
+### ② 内定者模式(蒸馏知识)——跑 shukatsu-distill ingest 抓取网上信息
+
+- 把 YouTube 链接、就活网站文章链接、或直接粘贴的文本丢给 `/shukatsu-distill ingest`,它会用 defuddle / WebFetch 抓取正文,存进 `素材/YouTube/` 或 `素材/就活サイト/`。
+- 保存后**会不经确认自动跑一次 `distill` 模式**,把成功模式汇入蒸馏知识文件(如 `蒸馏知識/内定之路/金融.md`)。
+- 也就是说日常的操作很简单:每次发现一个内定者的信息源(YouTube 视频、就活网站文章),就跑一次 `ingest`。
 
 ## 许可证
 
