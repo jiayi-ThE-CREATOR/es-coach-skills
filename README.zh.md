@@ -1,6 +1,6 @@
 # es-coach-skills — 日本就活 ES 对话教练 Claude Code Skills
 
-**简体中文** | [日本語](README.md)
+[English](README.en.md) | **简体中文** | [日本語](README.md)
 
 面向日本就活(应届生招聘)ES(自我推荐信/エントリーシート)对策的三件套 [Claude Code](https://claude.com/claude-code) Skill。从内定者的经验谈中蒸馏成功模式,以此为依据批改 ES,并用企业分析报告核对企业理念、求人形象与 ES 内容是否契合。
 
@@ -8,18 +8,21 @@
 
 ## 三个 Skill 的关系
 
-```
-shukatsu-distill (ingest / grill)   kigyou-report
-  收集内定者经验谈 / 本人经历          把企业理念、部门、
-  作为素材积累                        求人形象整理成结构化报告
-        │                                   │
-        ▼                                   ▼
-shukatsu-distill (distill)  ──────────►  蒸馏知识文件
-        │                                   │
-        └───────────────┬───────────────────┘
-                         ▼
-                     es-coach
-              接收 ES,以上述两者为依据批改
+```mermaid
+flowchart TB
+    A["shukatsu-distill<br/>ingest / grill<br/><small>收集内定者经验谈 / 本人经历,作为素材积累</small>"]
+    B["kigyou-report<br/><small>把企业理念、部门、求人形象整理成结构化报告</small>"]
+    C["shukatsu-distill<br/>distill<br/><small>生成蒸馏知识文件</small>"]
+    D["es-coach<br/><small>接收 ES,以蒸馏知识 + 企业分析报告为依据批改</small>"]
+
+    A --> C
+    C --> D
+    B --> D
+
+    style A fill:#e3f2fd,stroke:#1565c0
+    style B fill:#e3f2fd,stroke:#1565c0
+    style C fill:#fff3e0,stroke:#e65100
+    style D fill:#e8f5e9,stroke:#2e7d32
 ```
 
 | Skill | 作用 |
@@ -74,6 +77,33 @@ pip install pyyaml
 /es-coach                     对话式批改 ES
 ```
 
+## 样例输出
+
+`examples/` 目录下放了几份用虚构数据生成的样例,让你不用先搭好 vault 就能看到实际输出长什么样:
+
+| 文件 | 内容 |
+|------|------|
+| [examples/es-coach-sample-critique.md](examples/es-coach-sample-critique.md) | 针对一份虚构 ES 的完整批改报告 |
+| [examples/shukatsu-distill-sample-chishiki.md](examples/shukatsu-distill-sample-chishiki.md) | `distill` 积累起来的蒸馏知识文件长什么样 |
+| [examples/kigyou-report-sample-excerpt.md](examples/kigyou-report-sample-excerpt.md) | 企业分析报告(12 章节中的节选) |
+
+## 仓库结构
+
+```
+es-coach-skills/
+├── skills/
+│   ├── es-coach/SKILL.md            ES 对话批改(Phase 0~8 流程)
+│   ├── shukatsu-distill/SKILL.md    ingest / distill / coach mock / grill 四种模式
+│   └── kigyou-report/SKILL.md       企业分析报告生成(固定 12 章节)
+├── tools/
+│   ├── count_chars.py               ES 字数/词数计数器(不依赖 LLM 目测)
+│   ├── experience_inventory_sync.py 从批改日志自动汇总经历使用情况
+│   └── vault_paths.py               vault.paths.env 的解析器
+├── examples/                        虚构数据的样例输出(见上表)
+├── vault.paths.example.env          vault 路径注册表模板
+└── README.md / README.zh.md / README.en.md
+```
+
 ## 素材怎么积累起来(两条补给路径)
 
 这套系统不会放着不管就自己变聪明。需要你自己去跑下面两件事,`vault.paths.env` 里指定的 vault 中的蒸馏知识、本人素材才会逐步长起来。本仓库只包含逻辑(Skill 的指令文本和辅助脚本),不含你任何具体的企业选考内容或 ES 实际数据。
@@ -88,7 +118,7 @@ pip install pyyaml
 ### ② 内定者模式(蒸馏知识)——跑 shukatsu-distill ingest 抓取网上信息
 
 - 把 YouTube 链接、就活网站文章链接、或直接粘贴的文本丢给 `/shukatsu-distill ingest`,它会用 defuddle / WebFetch 抓取正文,存进 `素材/YouTube/` 或 `素材/就活サイト/`。
-- 保存后**会不经确认自动跑一次 `distill` 模式**,把成功模式汇入蒸馏知识文件(如 `蒸馏知識/内定之路/金融.md`)。
+- 保存后**会不经确认自动跑一次 `distill` 模式**,把成功模式汇入蒸馏知识文件(如 `蒸留知識/内定之路/金融.md`)。
 - 也就是说日常的操作很简单:每次发现一个内定者的信息源(YouTube 视频、就活网站文章),就跑一次 `ingest`。
 
 ## 许可证
