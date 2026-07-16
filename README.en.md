@@ -10,10 +10,10 @@ A three-skill set for [Claude Code](https://claude.com/claude-code) that automat
 
 ```mermaid
 flowchart TB
-    A["shukatsu-distill<br/>ingest / grill<br/><small>Collects offer-holders' stories and your own experience as raw material</small>"]
-    B["kigyou-report<br/><small>Turns company philosophy, org structure, and desired-candidate profile into a structured report</small>"]
-    C["shukatsu-distill<br/>distill<br/><small>Produces distilled knowledge files</small>"]
-    D["es-coach<br/><small>Critiques your ES against the distilled knowledge + company report</small>"]
+    A["shukatsu-distill<br/>ingest / grill<br/>Collects offer-holders' stories and your own experience as raw material"]
+    B["kigyou-report<br/>Turns company philosophy, org structure, and desired-candidate profile into a structured report"]
+    C["shukatsu-distill<br/>distill<br/>Produces distilled knowledge files"]
+    D["es-coach<br/>Critiques your ES against the distilled knowledge + company report"]
 
     A --> C
     C --> D

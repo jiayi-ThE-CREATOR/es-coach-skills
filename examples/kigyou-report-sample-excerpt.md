@@ -33,16 +33,16 @@ flowchart TB
     C(["顧客<br/>法人 / 機関投資家"])
     subgraph L1["▼ フロントオフィス"]
         direction LR
-        F1["<b>Investment Banking</b><br/>資金調達助言"]
-        F2["<b>Markets</b><br/>トレーディング"]
+        F1["Investment Banking<br/>資金調達助言"]
+        F2["Markets<br/>トレーディング"]
     end
     subgraph L2["▼ ミドルオフィス"]
         direction LR
-        M1["<b>Risk</b>"]
+        M1["Risk"]
     end
     subgraph L3["▼ バックオフィス"]
         direction LR
-        B1["<b>Operations</b>"]
+        B1["Operations"]
     end
     C ==>|"取引依頼"| L1
     L1 ==>|"承認依頼"| L2

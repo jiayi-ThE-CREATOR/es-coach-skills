@@ -194,22 +194,22 @@ flowchart TB
 
     subgraph L1["▼ フロントオフィス（顧客接点・収益創出）"]
         direction LR
-        F1["<b>部門名1</b><br/>業務"]
-        F2["<b>部門名2</b><br/>業務"]
+        F1["部門名1<br/>業務"]
+        F2["部門名2<br/>業務"]
         F3["..."]
     end
 
     subgraph L2["▼ ミドルオフィス（リスク・統制）"]
         direction LR
-        M1["<b>Risk</b>"]
-        M2["<b>Compliance</b>"]
+        M1["Risk"]
+        M2["Compliance"]
         M3["..."]
     end
 
     subgraph L3["▼ バックオフィス（業務基盤）"]
         direction LR
-        B1["<b>Operations</b>"]
-        B2["<b>Engineering</b>"]
+        B1["Operations"]
+        B2["Engineering"]
         B3["..."]
     end
 

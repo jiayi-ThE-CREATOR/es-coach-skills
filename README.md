@@ -10,10 +10,10 @@
 
 ```mermaid
 flowchart TB
-    A["shukatsu-distill<br/>ingest / grill<br/><small>内定者の経験談・本人の経験を素材として蓄積</small>"]
-    B["kigyou-report<br/><small>企業の理念・部門・求める人物像を構造化レポートに整理</small>"]
-    C["shukatsu-distill<br/>distill<br/><small>蒸留知識ファイルを生成</small>"]
-    D["es-coach<br/><small>ES を受け取り、蒸留知識＋企業分析レポートを根拠に添削</small>"]
+    A["shukatsu-distill<br/>ingest / grill<br/>内定者の経験談・本人の経験を素材として蓄積"]
+    B["kigyou-report<br/>企業の理念・部門・求める人物像を構造化レポートに整理"]
+    C["shukatsu-distill<br/>distill<br/>蒸留知識ファイルを生成"]
+    D["es-coach<br/>ES を受け取り、蒸留知識＋企業分析レポートを根拠に添削"]
 
     A --> C
     C --> D
