@@ -8,22 +8,7 @@
 
 ## 3つの Skill の関係
 
-```mermaid
-flowchart TB
-    A["shukatsu-distill<br/>ingest / grill<br/>内定者の経験談・本人の経験を素材として蓄積"]
-    B["kigyou-report<br/>企業の理念・部門・求める人物像を構造化レポートに整理"]
-    C["shukatsu-distill<br/>distill<br/>蒸留知識ファイルを生成"]
-    D["es-coach<br/>ES を受け取り、蒸留知識＋企業分析レポートを根拠に添削"]
-
-    A --> C
-    C --> D
-    B --> D
-
-    style A fill:#e3f2fd,stroke:#1565c0
-    style B fill:#e3f2fd,stroke:#1565c0
-    style C fill:#fff3e0,stroke:#e65100
-    style D fill:#e8f5e9,stroke:#2e7d32
-```
+![3つの Skill の関係図](assets/skill-relationship-ja.svg)
 
 | Skill | 役割 |
 |-------|------|

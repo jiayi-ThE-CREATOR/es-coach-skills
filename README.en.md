@@ -8,22 +8,7 @@ A three-skill set for [Claude Code](https://claude.com/claude-code) that automat
 
 ## How the three skills relate
 
-```mermaid
-flowchart TB
-    A["shukatsu-distill<br/>ingest / grill<br/>Collects offer-holders' stories and your own experience as raw material"]
-    B["kigyou-report<br/>Turns company philosophy, org structure, and desired-candidate profile into a structured report"]
-    C["shukatsu-distill<br/>distill<br/>Produces distilled knowledge files"]
-    D["es-coach<br/>Critiques your ES against the distilled knowledge + company report"]
-
-    A --> C
-    C --> D
-    B --> D
-
-    style A fill:#e3f2fd,stroke:#1565c0
-    style B fill:#e3f2fd,stroke:#1565c0
-    style C fill:#fff3e0,stroke:#e65100
-    style D fill:#e8f5e9,stroke:#2e7d32
-```
+![Diagram of how the three skills relate](assets/skill-relationship-en.svg)
 
 | Skill | Role |
 |-------|------|
