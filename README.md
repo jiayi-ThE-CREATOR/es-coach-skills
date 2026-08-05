@@ -2,21 +2,22 @@
 
 [English](README.en.md) | [简体中文](README.zh.md) | **日本語**
 
-日本就活（新卒採用）の ES（エントリーシート）対策を、[Claude Code](https://claude.com/claude-code) の Skill として自動化する3点セット。内定者の経験談から成功パターンを蒸留（distill）し、それを根拠に ES を添削し、企業分析レポートで理念・求める人物像との適合を突き合わせる。
+日本就活（新卒採用）の ES（エントリーシート）・面接対策を、[Claude Code](https://claude.com/claude-code) の Skill として自動化する4点セット。内定者の経験談から成功パターンを蒸留（distill）し、それを根拠に ES を添削し、企業分析レポートで理念・求める人物像との適合を突き合わせ、面接前には対策レポートに統合する。
 
 > これは個人の就活自動化プロジェクトから抽出した Skill 本体です。あなたの ES 内容・企業情報・vault の中身は含まれていません——すべてあなた自身の Obsidian vault に蓄積されます。
 
-## 3つの Skill の関係
+## 4つの Skill の関係
 
-![3つの Skill の関係図](assets/skill-relationship-ja.svg)
+![4つの Skill の関係図](assets/skill-relationship-ja.svg)
 
 | Skill | 役割 |
 |-------|------|
 | `es-coach` | ES 文を対話的に添削（事実確認 → 評価 → 修正ループ → サインオフ）。蒸留知識・企業分析レポート・本人の過去エピソードを根拠にする |
-| `shukatsu-distill` | `ingest`（内定者体験談の取り込み）/ `distill`（成功パターンの抽出）/ `coach mock`（模擬面接）/ `grill`（逆面接で本人の経験を素材化）の4モード |
+| `shukatsu-distill` | `ingest`（内定者体験談の取り込み）/ `distill`（成功パターンの抽出）/ `grill`（逆面接で本人の経験を素材化）の3モード |
 | `kigyou-report` | 指定企業を12セクション固定の構造化レポートに整理（部門マップ、企業理念、ES 攻略法など） |
+| `mensetsu-report` | 企業×部門×面接段階を指定すると、蒸留知識・企業分析レポート・提出済みES・過去の面接記録を統合し、想定質問バンク／回答骨子／逆質問／再発弱点を1枚の事前準備レポートにまとめる（対話型の模擬面接は廃止し、本 skill が後継） |
 
-3つとも Obsidian vault にデータを読み書きする前提で、vault 内のパスは `vault.paths.env` という**唯一のレジストリファイル**経由で解決する（vault の再編成をしても Skill 本文を書き換えずに済む設計）。
+4つとも Obsidian vault にデータを読み書きする前提で、vault 内のパスは `vault.paths.env` という**唯一のレジストリファイル**経由で解決する（vault の再編成をしても Skill 本文を書き換えずに済む設計）。
 
 ## 必要なもの
 
@@ -44,6 +45,7 @@ mkdir -p ~/.claude/skills
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/es-coach"        ~/.claude/skills/es-coach
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/shukatsu-distill" ~/.claude/skills/shukatsu-distill
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"    ~/.claude/skills/kigyou-report
+ln -s "$SHUKATSU_SKILLS_ROOT/skills/mensetsu-report"  ~/.claude/skills/mensetsu-report
 
 # 5. Python 依存関係
 pip install pyyaml
@@ -57,9 +59,9 @@ pip install pyyaml
 /shukatsu-distill ingest      内定者の体験談・記事を素材として取り込む
 /shukatsu-distill distill     素材から成功パターンを抽出・蒸留知識に反映
 /shukatsu-distill grill       逆面接形式であなた自身の経験を掘り起こして素材化
-/shukatsu-distill coach mock  模擬面接
 /kigyou-report <企業名>        企業分析レポートを生成
 /es-coach                     ES を対話的に添削
+/mensetsu-report <企業名>      面接前に読む面接対策レポートを生成
 ```
 
 ## サンプル出力
@@ -78,8 +80,11 @@ pip install pyyaml
 es-coach-skills/
 ├── skills/
 │   ├── es-coach/SKILL.md            ES 対話添削（Phase 0〜8 のフロー）
-│   ├── shukatsu-distill/SKILL.md    ingest / distill / coach mock / grill の4モード
-│   └── kigyou-report/SKILL.md       企業分析レポート生成（12セクション固定）
+│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill の3モード
+│   ├── kigyou-report/
+│   │   ├── SKILL.md                 企業分析レポート生成（12セクション固定）
+│   │   └── references/              書式規約・部門セクションのテンプレ（必要な Step でのみ読む）
+│   └── mensetsu-report/SKILL.md     面接対策レポート生成（想定質問バンク・回答骨子）
 ├── tools/
 │   ├── count_chars.py               ES 字数・語数カウンタ（LLM の目測を使わない）
 │   ├── experience_inventory_sync.py 添削ログから経験の使用状況を自動集計

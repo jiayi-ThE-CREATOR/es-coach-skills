@@ -1,11 +1,20 @@
 ---
 name: kigyou-report
-description: 就活向けの企業分析レポートを蒸留システム風（構造化）で生成する。Vault 既存ノート + Web リサーチを組み合わせ、Properties / Callout / テーブル / Mermaid を駆使した 12 セクションの深度レポートを「就活/企業分析报告/」に保存する。/kigyou-report <企業名> で起動。外資系金融・総合商社・戦略コンサル・日系大手など、どの業界の企業でも対応可能。
+description: 就活向けの企業分析レポートを蒸留システム風（構造化）で生成する。Vault 既存ノート + Web リサーチを組み合わせ、Properties / Callout / テーブル / Mermaid を駆使した 12 セクションの深度レポートを「企業分析报告/」に保存する。/kigyou-report <企業名> で起動。外資系金融・総合商社・戦略コンサル・日系大手など、どの業界の企業でも対応可能。
 ---
 
 # kigyou-report — 就活企業分析レポート生成 skill
 
 ユーザーが指定した企業を 12 セクション固定の構造化レポートに蒸留し、Obsidian Vault の「企業分析报告/」に保存する skill（公開情報が薄い企業のみ簡易 5 版に縮退。エッジケース参照）。
+
+## 詳細は references/ に分離（必要な Step で読む）
+
+`~/.claude/skills/kigyou-report/references/` 配下：
+
+| ファイル | いつ読むか |
+|---|---|
+| `style-guide.md` | **Step 3 と Step 5**：Callout / テーブル / Wikilink の書式規約 ＋ Web リサーチのクエリ設計 |
+| `division-section.md` | **Step 5 でセクション 4 を書くとき**：3 層 Mermaid 概観図テンプレ・各部門サブセクションの構造・引用ルール・defuddle 取得先 |
 
 ## パス解決（正本はレジストリ）
 
@@ -25,7 +34,6 @@ VAULT_ROOT               → vault 根（Step 2 の grep 起点）
 
 ## 起動フロー
 
-引数を確認する：
 - `/kigyou-report <企業名>` → 該当企業のレポート生成
 - `/kigyou-report` （引数なし） → ユーザーに企業名を確認
 
@@ -42,8 +50,6 @@ VAULT_ROOT               → vault 根（Step 2 の grep 起点）
 ---
 
 ## Step 2 — Vault 既存ノート検索
-
-以下のコマンドで既存の素材・蒸留知識を確認する：
 
 ```bash
 source "$SHUKATSU_SKILLS_ROOT/vault.paths.env"
@@ -65,37 +71,13 @@ grep -rli "<企業名>\|<英略称>\|<別表記>" \
 
 ## Step 3 — Web リサーチ
 
-以下のクエリを最低 3 回（最大 5 回）実行する：
-
-> [!important] 役割分担（重複打ちを避ける）
-> **部門・事業構造そのもの**は WebSearch で取りに行かず、Step 5 セクション 4 の **defuddle 公式「Divisions / Our Businesses」ページに一本化**する。ここ（Step 3）の WebSearch は **公式ページに載らない「最新の動き・数字・評判」**（最近の deal、組織変動、年収レンジ、選考フロー）だけを補完する用途に絞る。
-
-### 必須クエリ
-
-1. `<企業名> 日本 新卒採用 <次年度>卒 サマーインターン <現在年>` — 最新採用フロー
-2. `<企業名 英語> Japan <現在年> M&A deals / 最新決算 / 組織変動` — 最新の動向・数字（**静的な部門構造は defuddle に任せる**）
-3. `<企業名> 日本 初任給 年収 <主要職種> <現在年>` — 給与レンジ
-4. `<企業名> 企業理念 パーパス コアバリュー 求める人物像 採用` — 公式の理念・求める人物像（**セクション6で原文引用するため必須**。公式採用ページ／企業理念ページを優先）
-
-### オプションクエリ（業界に応じて）
-
-- 外銀／戦コン：`<企業名> 圧迫面接 フェルミ推定 ケース面接`
-- 商社：`<企業名> ガクチカ 海外勤務 配属`
-- 日系大手：`<企業名> OpenWork 残業時間 離職率`
-- IT メガベンチャー：`<企業名> エンジニア新卒 ジョブ型 配属`
-
-> [!tip] 情報源の優先度
-> 1. 企業公式キャリアページ（最も信頼）
-> 2. Bloomberg / 日経 / Reuters（最新動向）
-> 3. ワンキャリア / 外資就活 / Unistyle（採用詳細）
-> 4. OpenWork（社風・年収の補強）
-> 5. note / Diamond / Toyo Keizai（質的データ）
+`references/style-guide.md` の「Web リサーチのクエリ設計」に従い、**最低 3 回（最大 5 回）**実行する。静的な部門・事業構造は WebSearch で取らず、Step 5 の defuddle 公式ページに一本化する。
 
 ---
 
 ## Step 4 — 情報不足時のユーザー確認（オプション）
 
-レポート生成前に、以下が **vault・Web いずれにもない** 場合は必ずユーザーに確認：
+以下が **vault・Web いずれにもない** 場合は必ずユーザーに確認：
 
 - 直近の説明会・OB 訪問で得た非公開情報
 - ユーザーの志望部門（IBD / Markets など、戦略を変える要素）
@@ -108,6 +90,8 @@ grep -rli "<企業名>\|<英略称>\|<別表記>" \
 ## Step 5 — レポート生成（12 セクション固定）
 
 参考フォーマット：`$VAULT_KIGYOU_REPORTS/【ゴールドマン・サックス】企業分析レポート.md`（レジストリ解決後に読む）
+書式規約：`references/style-guide.md`
+セクション 4 の詳細：`references/division-section.md`
 
 ### ファイル名
 
@@ -115,10 +99,7 @@ grep -rli "<企業名>\|<英略称>\|<別表記>" \
 【<企業名>】企業分析レポート.md
 ```
 
-例：
-- `【ゴールドマン・サックス】企業分析レポート.md`
-- `【三菱商事】企業分析レポート.md`
-- `【マッキンゼー】企業分析レポート.md`
+例：`【ゴールドマン・サックス】企業分析レポート.md` / `【三菱商事】企業分析レポート.md` / `【マッキンゼー】企業分析レポート.md`
 
 ### Frontmatter（Properties）
 
@@ -155,7 +136,7 @@ related:
 1. **タイトル + 一言で言うと callout + 使い方 tip** — TL;DR を `> [!success]` で 1 段落
 2. **会社概要テーブル** — 設立・親会社・代表者・人員規模・主要事業
 3. **日本市場における位置づけ** — 業界順位、最新トピック（`> [!important]`）、戦略の重心
-4. **部門・職種マップ（業務詳説）** — 冒頭に **3 層ピラミッド組織図（Mermaid）+ 全部門一覧表 + 協働シナリオ 3 例**を置き、その後に各部門を 1 サブセクション化（下記「部門セクション必須フォーマット」参照）
+4. **部門・職種マップ（業務詳説）** — **`references/division-section.md` の構造を厳守**（3 層ピラミッド Mermaid + 全部門一覧表 + 協働シナリオ 3 例 → 各部門サブセクション → 部門サマリー比較表）
 5. **採用フロー** — Mermaid `flowchart` + スケジュールテーブル
 6. **企業理念・求める人材像** — 冒頭に **企業理念／パーパス／コアバリュー**（公式原文を `> [!quote]` で引用）と **公式の「求める人物像」**（採用ページ原文を `> [!quote]` で引用、無ければ「公式の明示なし」と明記）を必ず置く。その後に 5 つの核 + 落選 / 内定の差分テーブル + `> [!danger]` 致命傷 + 理念をES・面接にどう使うかの `> [!tip]`
 7. **年収・キャリアパス** — 役職別テーブル + Mermaid 昇進フロー
@@ -166,147 +147,7 @@ related:
 12. **一年間の準備プラン** — Mermaid `gantt` + 月別 To-Do
    - 加えて **FAQ + 関連ノート Wikilinks + 情報源 + メンテナンス note** をフッターに
 
-### 部門セクション必須フォーマット（最重要）
-
-セクション 4「部門・職種マップ」は **このレポートの中核**。**X.0 として「全体概観図」を最初に置き**、その後で各部門ごとのサブセクションに展開する。
-
----
-
-#### X.0 部門全体概観図（必ずセクション冒頭に配置）
-
-各部門を **フロント / ミドル / バック** の 3 層に分類した Mermaid ピラミッドを生成する。情報源は **対象企業の公式「Divisions」または「Our Businesses」ページ**を優先（例：GS なら https://www.goldmansachs.com/japan/careers/divisions、MS なら corp.morganstanley.com/careers/divisions）。
-
-JS レンダリングで取得できない場合は、`curl` で生 HTML を取得し、`grep -oE '[ア-ン・ー]+部門[^"<>]*'` 等で部門名と説明を抽出する。
-
-**3 層分類の判定基準**：
-
-| レイヤー | 判定基準 | 代表例 |
-|---------|---------|--------|
-| フロント | 顧客接点があり、収益を直接生む | IBD、Markets、Research、Asset Management |
-| ミドル | リスク・統制・規制対応を担う | Risk、Compliance、Controllers、Legal、Audit |
-| バック | 実行・基盤・人事を担う | Operations、Engineering、Finance、HR、Real Estate |
-
-**Mermaid テンプレ**（このまま使用、企業固有部門名のみ差し替え）。プレビュー: [assets/kigyou-report-orgchart-template.svg](../../assets/kigyou-report-orgchart-template.svg)（GitHub 上でこのコードブロックがライブ Mermaid として描画されない場合があるため、静止画も置いている。Obsidian にコピーする分にはこの下の生テキストをそのまま使う）：
-
-```mermaid
-flowchart TB
-    C(["顧客<br/>法人 / 機関投資家 / 富裕個人"])
-
-    subgraph L1["▼ フロントオフィス（顧客接点・収益創出）"]
-        direction LR
-        F1["部門名1<br/>業務"]
-        F2["部門名2<br/>業務"]
-        F3["..."]
-    end
-
-    subgraph L2["▼ ミドルオフィス（リスク・統制）"]
-        direction LR
-        M1["Risk"]
-        M2["Compliance"]
-        M3["..."]
-    end
-
-    subgraph L3["▼ バックオフィス（業務基盤）"]
-        direction LR
-        B1["Operations"]
-        B2["Engineering"]
-        B3["..."]
-    end
-
-    C ==>|"取引・運用依頼"| L1
-    L1 ==>|"取引承認依頼"| L2
-    L2 ==>|"執行指示"| L3
-    L3 -.->|"基盤・データ提供"| L1
-    L2 -.->|"監督・チェック"| L1
-
-    style L1 fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
-    style L2 fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style L3 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style C fill:#f3e5f5,stroke:#6a1b9a,stroke-width:2px
-```
-
-**続けて必須**：
-- **部門一覧テーブル**：全 N 部門を「レイヤー / 部門名 / 公式説明 1 行要約」の 3 列で列挙
-- **協働シナリオ 3 例**：`> [!example]` で「主要取引（M&A、トレード、新商品開発等）が部門間をどう流れるか」を矢印付き 1-2 行で示す
-- **就活生視点 tip**：図全体から読み取れる戦略的示唆を 3-4 点
-
----
-
-#### X.1 以降：各部門サブセクション
-
-X.0 の後で、各部門ごとに **1 つの独立サブセクション**を作り、以下の構造を厳守する：
-
-```markdown
-### 4.X 部門名（英略 / 正式英名）
-
-> [!quote] 公式（goldmansachs.com 等の正式ソース）
-> **<原文（英語）の主要パラグラフをそのまま引用>**
-
-> [!quote] 公式 — <サブテーマ>（任意：ランキング、業績、サブ部門説明等）
-> **<追加引用>**
-
-**業務の本質**（1-2 段落、私の補足解釈）：<業務内容、収益源、組織内位置づけ>
-
-#### サブ業務 / プロダクト領域
-
-| 領域 | 内容 / 公式引用 |
-|------|---------------|
-| <サブ1> | "<公式短文引用 or 私の説明>" |
-| <サブ2> | ... |
-
-**日本拠点の特性**（任意）：<日本特有の事情、リーダー名、最近の組織変動>
-
-> [!tip] 就活生視点
-> <この部門を志望するうえでの 1-3 文の助言>
-```
-
-#### 引用ルール
-
-- **公式引用 ≥ 解説**：1 サブセクション内で **引用ブロックの行数 ≥ 私の解説の行数**
-- **原文優先**：英語ソースは英語のまま `**bold**` で引用、日本語意訳は補足としてカッコ書き
-- **出典明示**：各 `> [!quote]` の冒頭に「公式（goldmansachs.com / <ページ名>）」と明記
-- **改変禁止**：引用文の語句を改変せず、省略する場合は `...` を使う
-- **複数ソース**：同じ部門に対し公式・業界紙・社員ブログなど複数ソースがあれば、全て引用ブロックで並列
-
-#### 取得すべき公式ページ（例：GS の場合）
-
-```bash
-# defuddle で並列取得
-defuddle parse "https://www.goldmansachs.com/what-we-do/our-businesses" --md
-defuddle parse "https://www.goldmansachs.com/what-we-do/investment-banking" --md
-defuddle parse "https://www.goldmansachs.com/careers/our-firm/engineering" --md
-defuddle parse "https://www.goldmansachs.com/careers/our-firm/global-investment-research" --md
-defuddle parse "https://www.goldmansachs.com/careers/our-firm/operations" --md
-# 他、各部門の専用ページ
-```
-
-日本語公式ページは JS レンダリングで取得困難な場合がある → **グローバル英語ページを優先**。
-
-#### 部門サブセクションの後に必須
-
-- **3.X 部門サマリー比較表**：全部門を 1 つの表で横断比較（顧客 / 収益源 / 新卒倍率 / 数字力 / 英語要求）
-- **出典コールアウト**：`> [!important] 出典` で「公式英文ページから取得、和訳は補足のため意訳を含む」と明記
-
----
-
-### スタイルガイド（蒸留システム風）
-
-- **Properties**：YAML frontmatter で構造化メタデータを全て表現
-- **Callout**：以下を使い分け
-  - `> [!success]` — 一言で言うと / 核心ポイント
-  - `> [!info]` — 補足情報
-  - `> [!tip]` — Tips・推奨アクション
-  - `> [!important]` — 最新動向・必読
-  - `> [!warning]` — 注意点
-  - `> [!danger]` — 致命傷・避けるべき
-  - `> [!quote]` — 引用・名言
-  - `> [!question]` — FAQ
-  - `> [!note]` — メンテナンス情報
-- **テーブル**：比較・スケジュール・年収表は必ず Markdown table
-- **Mermaid**：フロー（採用・キャリア）と Gantt（準備プラン）
-- **Wikilinks**：Vault 内ノートには必ず `[[ノート名]]` でリンク。**リンクを書く前に必ず `ls`/`grep` で実ファイル名を確認し、確認できた正確な basename だけを使う**（記憶からノート名を推測して書かない——推測リンクが灰链として溜まる事故の再発防止。全角スペース・`Q&A` 等の表記揺れに注意）
-- **絵文字**：使わない（蒸留システム風はテキスト主体）
-- **本文の数値・固有名詞**：Web リサーチで裏取りした実数を使う、推測は「推定」と明記
+> セクション 6（理念・求める人物像）と セクション 4 の部門節は `/es-coach` が添削時に読む参照元。ここが薄いと ES 添削の企業適合評価ができなくなるので手を抜かない。
 
 ---
 
@@ -332,7 +173,7 @@ defuddle parse "https://www.goldmansachs.com/careers/our-firm/operations" --md
 
 [次のアクション提案]
 - このレポートを基に ES を書くなら → `/es-coach` 起動
-- 模擬面接を行うなら → `/shukatsu-distill coach mock`
+- 面接対策レポートを作るなら → `/mensetsu-report`
 - 関連企業も同形式で作るなら → `/kigyou-report <競合名>`
 ```
 

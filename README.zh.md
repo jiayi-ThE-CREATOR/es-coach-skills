@@ -2,21 +2,22 @@
 
 [English](README.en.md) | **简体中文** | [日本語](README.md)
 
-面向日本就活(应届生招聘)ES(自我推荐信/エントリーシート)对策的三件套 [Claude Code](https://claude.com/claude-code) Skill。从内定者的经验谈中蒸馏成功模式,以此为依据批改 ES,并用企业分析报告核对企业理念、求人形象与 ES 内容是否契合。
+面向日本就活(应届生招聘)ES(自我推荐信/エントリーシート)与面试对策的四件套 [Claude Code](https://claude.com/claude-code) Skill。从内定者的经验谈中蒸馏成功模式,以此为依据批改 ES,用企业分析报告核对企业理念、求人形象与 ES 内容是否契合,并在面试前把这些整合成一份对策报告。
 
 > 这是从个人就活自动化项目中抽取出的 Skill 本体。不包含你的 ES 内容、企业信息或 vault 数据——一切都会积累在你自己的 Obsidian vault 里。
 
-## 三个 Skill 的关系
+## 四个 Skill 的关系
 
-![三个 Skill 的关系图](assets/skill-relationship-zh.svg)
+![四个 Skill 的关系图](assets/skill-relationship-zh.svg)
 
 | Skill | 作用 |
 |-------|------|
 | `es-coach` | 对话式批改 ES(事实核查 → 评价 → 修改循环 → 定稿签字)。以蒸馏知识、企业分析报告、本人过往经历为依据 |
-| `shukatsu-distill` | 四种模式:`ingest`(录入内定者经验谈)/ `distill`(提炼成功模式)/ `coach mock`(模拟面试)/ `grill`(反向面试,挖掘并素材化本人经历) |
+| `shukatsu-distill` | 三种模式:`ingest`(录入内定者经验谈)/ `distill`(提炼成功模式)/ `grill`(反向面试,挖掘并素材化本人经历) |
 | `kigyou-report` | 把指定企业整理成固定 12 章节的结构化报告(部门地图、企业理念、ES 攻略法等) |
+| `mensetsu-report` | 指定企业×部门×面试阶段后,整合蒸馏知识、企业分析报告、已提交的 ES 与过往面试记录,输出预设问题库/回答骨架/反问/复发弱点的赛前准备报告(对话式模拟面试已废止,由本 skill 接替) |
 
-三者都以读写 Obsidian vault 为前提,vault 内的路径统一经由 `vault.paths.env` 这一**唯一注册表文件**解析(即使 vault 目录重新整理,也不用改 Skill 正文)。
+四者都以读写 Obsidian vault 为前提,vault 内的路径统一经由 `vault.paths.env` 这一**唯一注册表文件**解析(即使 vault 目录重新整理,也不用改 Skill 正文)。
 
 ## 前置依赖
 
@@ -44,6 +45,7 @@ mkdir -p ~/.claude/skills
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/es-coach"         ~/.claude/skills/es-coach
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/shukatsu-distill" ~/.claude/skills/shukatsu-distill
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"    ~/.claude/skills/kigyou-report
+ln -s "$SHUKATSU_SKILLS_ROOT/skills/mensetsu-report"  ~/.claude/skills/mensetsu-report
 
 # 5. Python 依赖
 pip install pyyaml
@@ -57,9 +59,9 @@ pip install pyyaml
 /shukatsu-distill ingest      录入内定者经验谈/文章作为素材
 /shukatsu-distill distill     从素材中提炼成功模式,写入蒸馏知识
 /shukatsu-distill grill       以反向面试的形式挖掘你自己的经历并素材化
-/shukatsu-distill coach mock  模拟面试
 /kigyou-report <企业名>        生成企业分析报告
 /es-coach                     对话式批改 ES
+/mensetsu-report <企业名>      生成面试前阅读的面试对策报告
 ```
 
 ## 样例输出
@@ -78,8 +80,11 @@ pip install pyyaml
 es-coach-skills/
 ├── skills/
 │   ├── es-coach/SKILL.md            ES 对话批改(Phase 0~8 流程)
-│   ├── shukatsu-distill/SKILL.md    ingest / distill / coach mock / grill 四种模式
-│   └── kigyou-report/SKILL.md       企业分析报告生成(固定 12 章节)
+│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill 三种模式
+│   ├── kigyou-report/
+│   │   ├── SKILL.md                 企业分析报告生成(固定 12 章节)
+│   │   └── references/              格式规约与部门章节模板(按需读取)
+│   └── mensetsu-report/SKILL.md     面试对策报告生成(预设问题库、回答骨架)
 ├── tools/
 │   ├── count_chars.py               ES 字数/词数计数器(不依赖 LLM 目测)
 │   ├── experience_inventory_sync.py 从批改日志自动汇总经历使用情况

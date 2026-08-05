@@ -2,21 +2,22 @@
 
 **English** | [简体中文](README.zh.md) | [日本語](README.md)
 
-A three-skill set for [Claude Code](https://claude.com/claude-code) that automates ES (entry sheet / cover letter) preparation for Japanese new-graduate recruiting (`就活`/shukatsu). It distills successful patterns from offer-holders' experience, uses that as grounds to critique your ES, and cross-checks company philosophy / desired-candidate profiles via structured company research reports.
+A four-skill set for [Claude Code](https://claude.com/claude-code) that automates ES (entry sheet / cover letter) and interview preparation for Japanese new-graduate recruiting (`就活`/shukatsu). It distills successful patterns from offer-holders' experience, uses that as grounds to critique your ES, cross-checks company philosophy / desired-candidate profiles via structured company research reports, and folds all of it into a pre-interview prep report.
 
 > This is the skill layer extracted from a personal job-hunting automation project. It contains none of your ES content, target companies, or vault data — everything accumulates in your own Obsidian vault.
 
-## How the three skills relate
+## How the four skills relate
 
-![Diagram of how the three skills relate](assets/skill-relationship-en.svg)
+![Diagram of how the four skills relate](assets/skill-relationship-en.svg)
 
 | Skill | Role |
 |-------|------|
 | `es-coach` | Interactive ES critique (fact-check → 5-axis scoring → revision loop → sign-off). Grounded in distilled knowledge, the company report, and your own past episodes |
-| `shukatsu-distill` | Four modes: `ingest` (bring in offer-holders' accounts), `distill` (extract success patterns), `coach mock` (mock interview), `grill` (reverse-interview to turn your own experience into material) |
+| `shukatsu-distill` | Three modes: `ingest` (bring in offer-holders' accounts), `distill` (extract success patterns), `grill` (reverse-interview to turn your own experience into material) |
 | `kigyou-report` | Turns a named company into a fixed 12-section structured report (org/division map, company philosophy, ES tactics, etc.) |
+| `mensetsu-report` | Given company × division × interview stage, merges distilled knowledge, the company report, your submitted ES and past interview records into one prep sheet: question bank, answer outlines, reverse questions, recurring weaknesses (replaces the retired interactive mock interview) |
 
-All three read and write an Obsidian vault; every vault path resolves through `vault.paths.env`, a **single registry file** (so reorganizing your vault never requires editing skill prose).
+All four read and write an Obsidian vault; every vault path resolves through `vault.paths.env`, a **single registry file** (so reorganizing your vault never requires editing skill prose).
 
 ## Requirements
 
@@ -43,7 +44,8 @@ $EDITOR vault.paths.env   # point it at your actual Obsidian vault
 mkdir -p ~/.claude/skills
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/es-coach"         ~/.claude/skills/es-coach
 ln -s "$SHUKATSU_SKILLS_ROOT/skills/shukatsu-distill" ~/.claude/skills/shukatsu-distill
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"    ~/.claude/skills/kigyou-report
+ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"     ~/.claude/skills/kigyou-report
+ln -s "$SHUKATSU_SKILLS_ROOT/skills/mensetsu-report"   ~/.claude/skills/mensetsu-report
 
 # 5. Python dependency
 pip install pyyaml
@@ -57,9 +59,9 @@ After setup, start with `/shukatsu-distill ingest` in Claude Code (feed it offer
 /shukatsu-distill ingest      Bring in offer-holders' accounts/articles as raw material
 /shukatsu-distill distill     Extract success patterns from material into distilled knowledge
 /shukatsu-distill grill       Reverse-interview to dig up and materialize your own experience
-/shukatsu-distill coach mock  Mock interview
-/kigyou-report <company>       Generate a company research report
+/kigyou-report <company>      Generate a company research report
 /es-coach                     Interactive ES critique
+/mensetsu-report <company>    Generate a pre-interview prep report
 ```
 
 ## Sample output
@@ -78,8 +80,11 @@ After setup, start with `/shukatsu-distill ingest` in Claude Code (feed it offer
 es-coach-skills/
 ├── skills/
 │   ├── es-coach/SKILL.md            Interactive ES critique (Phase 0–8 flow)
-│   ├── shukatsu-distill/SKILL.md    ingest / distill / coach mock / grill (4 modes)
-│   └── kigyou-report/SKILL.md       Company report generation (fixed 12 sections)
+│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill (3 modes)
+│   ├── kigyou-report/
+│   │   ├── SKILL.md                 Company report generation (fixed 12 sections)
+│   │   └── references/              Formatting rules & division-section template (read on demand)
+│   └── mensetsu-report/SKILL.md     Interview prep report (question bank, answer outlines)
 ├── tools/
 │   ├── count_chars.py               ES character/word counter (offloads counting from the LLM)
 │   ├── experience_inventory_sync.py Recomputes episode usage from critique logs
