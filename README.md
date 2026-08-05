@@ -36,20 +36,32 @@ cd es-coach-skills
 echo 'export SHUKATSU_SKILLS_ROOT="'"$(pwd)"'"' >> ~/.zshrc
 source ~/.zshrc
 
-# 3. vault のパスを設定する
-cp vault.paths.example.env vault.paths.env
-$EDITOR vault.paths.env   # あなたの Obsidian vault の実際のパスに書き換える
+# 3. セットアップ（1回目は vault.paths.env を作って終わる）
+./setup.sh
+$EDITOR vault.paths.env   # VAULT_ROOT をあなたの Obsidian vault の実パスに書き換える
 
-# 4. Skill を Claude Code に認識させる（コピーでもシンボリックリンクでも可）
-mkdir -p ~/.claude/skills
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/es-coach"        ~/.claude/skills/es-coach
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/shukatsu-distill" ~/.claude/skills/shukatsu-distill
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"    ~/.claude/skills/kigyou-report
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/mensetsu-report"  ~/.claude/skills/mensetsu-report
+# 4. もう一度実行すると、フォルダ作成・seed 配置・skill のリンクまで済む
+./setup.sh
 
 # 5. Python 依存関係
 pip install pyyaml
 ```
+
+`setup.sh` は何度実行しても安全（既存ファイルを上書きしない）。`./setup.sh --check` で書き換えずに現状の診断だけ出せる。やることは以下：
+
+| 手順 | 内容 |
+|---|---|
+| vault フォルダ作成 | `vault.paths.env` の全キー分のフォルダを `mkdir -p`。**これを作らないと初回起動でコケる** |
+| seed の配置 | 蒸留知識が 1 件も無いときだけ `seed/全行業共通.md` を配置（後述） |
+| skill のリンク | 4 つの skill を `~/.claude/skills/` に symlink |
+| 依存確認 | python3 / pyyaml の有無 |
+
+### seed 蒸留知識について
+
+この 4 skill の質は**蒸留知識ファイルの厚み**に比例する。とはいえ完全に空の状態では「内定者パターンを根拠にする」という前提そのものが成立しないため、`seed/全行業共通.md`（**公開情報・一般に知られた就活の型だけ**で書いた初期値、`source_count: 0`）を同梱している。
+
+- seed 由来の記述には出典が付かない。**出典 `[出典: ...]` が付いた記述だけが、あなたが ingest した素材から蒸留された「内定者の傾向」**——skill はこの2つを読み分け、seed 由来を根拠にするときは「一般的な就活知識として」と断る。
+- `/shukatsu-distill ingest` を回すほど出典付きの記述が増え、添削の根拠が一般論からあなたの志望先固有のものへ移っていく。
 
 セットアップ後、Claude Code で `/shukatsu-distill ingest` から始めるのがおすすめ（内定者の体験談・YouTube 動画の文字起こし・就活サイト記事などを投入 → 自動で蒸留 → `/es-coach` で ES 添削、という流れ）。
 
@@ -90,6 +102,8 @@ es-coach-skills/
 │   ├── experience_inventory_sync.py 添削ログから経験の使用状況を自動集計
 │   └── vault_paths.py               vault.paths.env の解析器
 ├── examples/                        架空データによるサンプル出力（上表）
+├── seed/全行業共通.md               初期の蒸留知識（公開情報ベース。setup.sh が配置）
+├── setup.sh                         フォルダ作成・seed 配置・skill リンク（冪等）
 ├── vault.paths.example.env          vault パスレジストリのテンプレート
 └── README.md / README.zh.md / README.en.md
 ```

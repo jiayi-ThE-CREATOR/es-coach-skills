@@ -36,20 +36,32 @@ cd es-coach-skills
 echo 'export SHUKATSU_SKILLS_ROOT="'"$(pwd)"'"' >> ~/.zshrc
 source ~/.zshrc
 
-# 3. Configure your vault path
-cp vault.paths.example.env vault.paths.env
-$EDITOR vault.paths.env   # point it at your actual Obsidian vault
+# 3. Run setup (the first run just creates vault.paths.env and stops)
+./setup.sh
+$EDITOR vault.paths.env   # point VAULT_ROOT at your actual Obsidian vault
 
-# 4. Make Claude Code aware of the skills (copy or symlink both work)
-mkdir -p ~/.claude/skills
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/es-coach"         ~/.claude/skills/es-coach
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/shukatsu-distill" ~/.claude/skills/shukatsu-distill
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"     ~/.claude/skills/kigyou-report
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/mensetsu-report"   ~/.claude/skills/mensetsu-report
+# 4. Run it again — this creates folders, drops the seed, links the skills
+./setup.sh
 
 # 5. Python dependency
 pip install pyyaml
 ```
+
+`setup.sh` is idempotent (it never overwrites existing files). `./setup.sh --check` reports the current state without writing anything. It does:
+
+| Step | What |
+|---|---|
+| Create vault folders | `mkdir -p` every path in `vault.paths.env`. **Without this the very first run breaks** |
+| Drop the seed | Installs `seed/全行業共通.md` only when you have no knowledge files yet (see below) |
+| Link the skills | Symlinks all four skills into `~/.claude/skills/` |
+| Check deps | python3 / pyyaml |
+
+### About the seed knowledge file
+
+These skills are only as good as the distilled-knowledge files behind them. But starting from literally nothing breaks their core premise — grounding critique in offer-holder patterns — so the repo ships `seed/全行業共通.md`, an initial file written **purely from public, widely-known Japanese job-hunting conventions**, with `source_count: 0`.
+
+- Seed lines carry no citation. **Only lines with a `[出典: ...]` citation come from material you ingested** — the skills read the difference and explicitly say "as general job-hunting knowledge" when leaning on seed content.
+- The more you run `/shukatsu-distill ingest`, the more cited lines accumulate, and the grounding shifts from generic advice toward the companies you are actually targeting.
 
 After setup, start with `/shukatsu-distill ingest` in Claude Code (feed it offer-holders' stories, YouTube transcripts, job-hunting site articles → auto-distilled → critique your ES with `/es-coach`).
 
@@ -90,6 +102,8 @@ es-coach-skills/
 │   ├── experience_inventory_sync.py Recomputes episode usage from critique logs
 │   └── vault_paths.py               Resolver for vault.paths.env
 ├── examples/                        Fabricated-data sample output (table above)
+├── seed/全行業共通.md               Starter distilled knowledge (public info; installed by setup.sh)
+├── setup.sh                         Creates folders, drops the seed, links skills (idempotent)
 ├── vault.paths.example.env          Vault path registry template
 └── README.md / README.zh.md / README.en.md
 ```

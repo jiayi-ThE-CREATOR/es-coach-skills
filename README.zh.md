@@ -36,20 +36,32 @@ cd es-coach-skills
 echo 'export SHUKATSU_SKILLS_ROOT="'"$(pwd)"'"' >> ~/.zshrc
 source ~/.zshrc
 
-# 3. 配置 vault 路径
-cp vault.paths.example.env vault.paths.env
-$EDITOR vault.paths.env   # 改成你自己 Obsidian vault 的实际路径
+# 3. 跑安装脚本(第一次只会生成 vault.paths.env 然后停下)
+./setup.sh
+$EDITOR vault.paths.env   # 把 VAULT_ROOT 改成你自己 Obsidian vault 的实际路径
 
-# 4. 让 Claude Code 识别这几个 Skill(复制或软链接都可以)
-mkdir -p ~/.claude/skills
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/es-coach"         ~/.claude/skills/es-coach
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/shukatsu-distill" ~/.claude/skills/shukatsu-distill
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/kigyou-report"    ~/.claude/skills/kigyou-report
-ln -s "$SHUKATSU_SKILLS_ROOT/skills/mensetsu-report"  ~/.claude/skills/mensetsu-report
+# 4. 再跑一次,完成建目录、放 seed、链接 skill
+./setup.sh
 
 # 5. Python 依赖
 pip install pyyaml
 ```
+
+`setup.sh` 可以反复执行(不会覆盖已有文件)。`./setup.sh --check` 只做诊断不写任何东西。它负责:
+
+| 步骤 | 内容 |
+|---|---|
+| 建 vault 目录 | 按 `vault.paths.env` 里的全部 key 执行 `mkdir -p`。**不建这些目录,第一次启动就会报错** |
+| 放置 seed | 仅当蒸馏知识一个文件都没有时,放入 `seed/全行業共通.md`(见下) |
+| 链接 skill | 把 4 个 skill 软链到 `~/.claude/skills/` |
+| 检查依赖 | python3 / pyyaml |
+
+### 关于 seed 蒸馏知识
+
+这几个 skill 的质量取决于蒸馏知识文件的厚度。但完全空白时,"以内定者模式为依据"这个前提本身就不成立,所以仓库自带 `seed/全行業共通.md`——一份**只用公开信息、广为人知的日本就活通行做法**写成的初始文件,`source_count: 0`。
+
+- seed 里的条目不带出处。**只有带 `[出典: ...]` 的条目才来自你自己 ingest 的素材**——skill 会区分这两者,引用 seed 内容时会明说"作为一般就活知识"。
+- `/shukatsu-distill ingest` 跑得越多,带出处的条目越多,批改依据就从通用建议逐步转向你志望企业特有的模式。
 
 配置完成后,建议在 Claude Code 里从 `/shukatsu-distill ingest` 开始(投入内定者经验谈、YouTube 视频文字稿、就活网站文章等 → 自动蒸馏 → 用 `/es-coach` 批改 ES,形成完整流程)。
 
@@ -90,6 +102,8 @@ es-coach-skills/
 │   ├── experience_inventory_sync.py 从批改日志自动汇总经历使用情况
 │   └── vault_paths.py               vault.paths.env 的解析器
 ├── examples/                        虚构数据的样例输出(见上表)
+├── seed/全行業共通.md               初始蒸馏知识(公开信息,由 setup.sh 放置)
+├── setup.sh                         建目录、放 seed、链接 skill(可反复执行)
 ├── vault.paths.example.env          vault 路径注册表模板
 └── README.md / README.zh.md / README.en.md
 ```
