@@ -9,7 +9,7 @@ description: 日本就活（金融・商社・コンサル・IT対応）の知�
 
 ## パス解決（正本はレジストリ）
 
-パスの**唯一の定義元**は `$SHUKATSU_SKILLS_ROOT/vault.paths.env`（このリポジトリをクローンした場所を指す環境変数。README のセットアップ手順を参照。vault 再編成時はそこだけ更新される）。対応キー：
+パスの**唯一の定義元**は `vault.paths.env`（clone 版はリポジトリ直下、plugin 版は `~/.config/shukatsu-skills/`。下の手順で解決する）。vault 再編成時もそこだけ更新すればよい。対応キー：
 
 ```
 VAULT_SHUKATSU_DISTILL    → 就活蒸留システムの根目録（素材/蒸留知識/添削ログの共通の親）
@@ -51,7 +51,7 @@ VAULT_SHUKATSU_HIKAKU_LOG → 添削ログ/
 以下のコマンドで既存ファイルに同じURLが存在しないか確認する：
 
 ```bash
-source "$SHUKATSU_SKILLS_ROOT/vault.paths.env"
+# 上の「パス解決」の手順で vault.paths.env を読み込んでおくこと
 grep -rl "source: [入力されたURL]" "$VAULT_SHUKATSU_DISTILL/素材/"
 ```
 
@@ -144,7 +144,7 @@ distill 完了後、必ず次の2点を明示する：
 以下のコマンドで `distilled: false` のファイルを先に特定する：
 
 ```bash
-source "$SHUKATSU_SKILLS_ROOT/vault.paths.env"
+# 上の「パス解決」の手順で vault.paths.env を読み込んでおくこと
 grep -rl "distilled: false" "$VAULT_SHUKATSU_DISTILL/素材/" 2>/dev/null
 ```
 

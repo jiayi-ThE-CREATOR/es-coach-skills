@@ -18,7 +18,7 @@ description: 就活向けの企業分析レポートを蒸留システム風（�
 
 ## パス解決（正本はレジストリ）
 
-パスの**唯一の定義元**は `$SHUKATSU_SKILLS_ROOT/vault.paths.env`（このリポジトリをクローンした場所を指す環境変数。README のセットアップ手順を参照）。このスキルで使うキー：
+パスの**唯一の定義元**は `vault.paths.env`（clone 版はリポジトリ直下、plugin 版は `~/.config/shukatsu-skills/`。下の手順で解決する）。このスキルで使うキー：
 
 ```
 VAULT_KIGYOU_REPORTS     → 企業分析报告/（レポート保存先）
@@ -29,7 +29,21 @@ VAULT_ROOT               → vault 根（Step 2 の grep 起点）
 参考フォーマット  → $VAULT_KIGYOU_REPORTS/【ゴールドマン・サックス】企業分析レポート.md
 ```
 
-解決方法：`source $SHUKATSU_SKILLS_ROOT/vault.paths.env` してから各キーを参照する。**本文にパスを直書きしない**（vault 再編で壊れるのを防ぐ）。
+解決方法：
+
+```bash
+# vault.paths.env の場所は clone 版 / plugin 版で変わる。先頭から順に、最初に見つかったものを使う
+for c in "${SHUKATSU_SKILLS_ROOT:-}/vault.paths.env" \
+         "$HOME/.config/shukatsu-skills/vault.paths.env" \
+         "${CLAUDE_PLUGIN_ROOT:-}/vault.paths.env"; do
+  [ -f "$c" ] && { set -a; . "$c"; set +a; break; }
+done
+SKILLS_ROOT="${CLAUDE_PLUGIN_ROOT:-$SHUKATSU_SKILLS_ROOT}"   # tools/ の置き場
+```
+
+どれも見つからなければ、推測でパスを直さず「セットアップが未完了です。`$SKILLS_ROOT/setup.sh` を実行してください」と案内して終了する。
+
+**本文にパスを直書きしない**（vault 再編で壊れるのを防ぐ）。
 **パスが存在しなかったら推測で直さず、レジストリを読んで解決し直すこと。**
 
 ## 起動フロー
@@ -52,7 +66,7 @@ VAULT_ROOT               → vault 根（Step 2 の grep 起点）
 ## Step 2 — Vault 既存ノート検索
 
 ```bash
-source "$SHUKATSU_SKILLS_ROOT/vault.paths.env"
+# 上の「パス解決」の手順で vault.paths.env を読み込んでおくこと
 grep -rli "<企業名>\|<英略称>\|<別表記>" \
   "${VAULT_ROOT}/" \
   2>/dev/null | head -20

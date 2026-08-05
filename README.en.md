@@ -19,13 +19,46 @@ A four-skill set for [Claude Code](https://claude.com/claude-code) that automate
 
 All four read and write an Obsidian vault; every vault path resolves through `vault.paths.env`, a **single registry file** (so reorganizing your vault never requires editing skill prose).
 
+## Three ways to use it (heavier = smarter)
+
+| | Needs | What you get |
+|---|---|---|
+| **① Portable** | A browser | Copy [portable/es-coach-portable.md](portable/es-coach-portable.md) into ChatGPT / Claude / Gemini. ES critique only, grounded in general job-hunting conventions. Start here |
+| **② Plugin** | Claude Code | Installs all four skills via `/plugin`. Only the vault config is manual |
+| **③ Clone** | Claude Code + git | For people who want to modify it. Same content as ② |
+
+② and ③ accumulate data in your Obsidian vault, so critique history, company research and interview prep connect to each other.
+
+### ① Portable (no install)
+
+Copy the contents of [portable/es-coach-portable.md](portable/es-coach-portable.md) into whatever AI you already use.
+
+What it cannot do: cross-check against past critiques, match against company philosophy, tie into your own experience inventory, count characters mechanically. For those, use ②.
+
+### ② Plugin (Claude Code, recommended)
+
+```
+/plugin marketplace add jiayi-ThE-CREATOR/es-coach-skills
+/plugin install shukatsu@es-coach-skills
+```
+
+Then run setup once, to point the skills at your vault:
+
+```bash
+bash ~/.claude/plugins/cache/es-coach-skills/shukatsu/*/setup.sh
+```
+
+(The first run creates `~/.config/shukatsu-skills/vault.paths.env` and stops. Set `VAULT_ROOT` to your vault, then run the same command again.)
+
+Plugin skills are namespaced — invoke them as `/shukatsu:es-coach`.
+
 ## Requirements
 
 - [Claude Code](https://claude.com/claude-code) (Skills feature)
 - Obsidian (or an equivalent Markdown vault)
 - Python 3 (needed to run `tools/count_chars.py` and `tools/experience_inventory_sync.py`; requires `pyyaml`)
 
-## Setup
+## ③ Clone (for people who want to modify it)
 
 ```bash
 # 1. Clone
@@ -101,7 +134,9 @@ es-coach-skills/
 │   ├── count_chars.py               ES character/word counter (offloads counting from the LLM)
 │   ├── experience_inventory_sync.py Recomputes episode usage from critique logs
 │   └── vault_paths.py               Resolver for vault.paths.env
+├── portable/es-coach-portable.md    Portable version (single copy-paste file)
 ├── examples/                        Fabricated-data sample output (table above)
+├── .claude-plugin/                  plugin / marketplace manifests
 ├── seed/全行業共通.md               Starter distilled knowledge (public info; installed by setup.sh)
 ├── setup.sh                         Creates folders, drops the seed, links skills (idempotent)
 ├── vault.paths.example.env          Vault path registry template

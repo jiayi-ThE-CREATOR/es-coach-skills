@@ -10,7 +10,7 @@ es-coach と同じ読み込み紀律（節の用途索引・部分読み・レ�
 
 ## パス解決（正本はレジストリ）
 
-パスの**唯一の定義元**は `$SHUKATSU_SKILLS_ROOT/vault.paths.env`（このリポジトリをクローンした場所を指す環境変数。README のセットアップ手順を参照）。使うキー：
+パスの**唯一の定義元**は `vault.paths.env`（clone 版はリポジトリ直下、plugin 版は `~/.config/shukatsu-skills/`。下の手順で解決する）。使うキー：
 
 - `VAULT_SHUKATSU_CHISHIKI` → 蒸留知識（`全行業共通.md` / `金融.md` 等はこの配下）
 - `VAULT_KIGYOU_REPORTS` → 企業分析报告（`/kigyou-report` が生成）
@@ -19,7 +19,21 @@ es-coach と同じ読み込み紀律（節の用途索引・部分読み・レ�
 - `VAULT_SHUKATSU_HIKAKU_LOG` → 添削ログ（ES添削＋過去の面接練習記録）
 - `VAULT_MENSETSU_TAISAKU` → 面接対策（本 skill の保存先）
 
-`source "$SHUKATSU_SKILLS_ROOT/vault.paths.env"` して解決する。**本文にパスを直書きしない。パスが無ければレジストリを読み直す。**
+解決方法：
+
+```bash
+# vault.paths.env の場所は clone 版 / plugin 版で変わる。先頭から順に、最初に見つかったものを使う
+for c in "${SHUKATSU_SKILLS_ROOT:-}/vault.paths.env" \
+         "$HOME/.config/shukatsu-skills/vault.paths.env" \
+         "${CLAUDE_PLUGIN_ROOT:-}/vault.paths.env"; do
+  [ -f "$c" ] && { set -a; . "$c"; set +a; break; }
+done
+SKILLS_ROOT="${CLAUDE_PLUGIN_ROOT:-$SHUKATSU_SKILLS_ROOT}"   # tools/ の置き場
+```
+
+どれも見つからなければ、推測でパスを直さず「セットアップが未完了です。`$SKILLS_ROOT/setup.sh` を実行してください」と案内して終了する。
+
+**本文にパスを直書きしない。パスが無ければレジストリを読み直す。**
 
 ---
 
@@ -44,7 +58,7 @@ es-coach と同じ読み込み紀律（節の用途索引・部分読み・レ�
 3. **企業分析レポート**（`VAULT_KIGYOU_REPORTS/【<企業名>】企業分析レポート.md`）：grep で 4 箇所だけ部分読み——
    志望部門の部門節／求める人材像の節／企業理念（`grep -n "理念\|パーパス\|Purpose"`）／
    面接・選考情報（`grep -n "面接\|選考プロセス\|想定質問"`）。レポートが無ければ「未作成のため企業固有情報は薄い」と断り、`/kigyou-report` を案内する。
-4. **本人素材**：先に `tools/experience_inventory_sync.py` を実行 → `VAULT_SHUKATSU_SOZAI_SELF/経験インベントリ.md` を読む。
+4. **本人素材**：先に `$SKILLS_ROOT/tools/experience_inventory_sync.py` を実行 → `VAULT_SHUKATSU_SOZAI_SELF/経験インベントリ.md` を読む。
    grill 素材は frontmatter の `theme` で当たりを付けて関係分のみ。
 5. **提出済み ES（最重要）**：`VAULT_SHUKATSU_ES/<会社名>/` 配下と、`VAULT_SHUKATSU_HIKAKU_LOG` の同一企業ログ
    （frontmatter `company_normalized` でマッチ）を読む。**面接の深掘りは提出 ES から来る**——ES に書いた内容・数字・

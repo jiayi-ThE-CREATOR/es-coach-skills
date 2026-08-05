@@ -19,13 +19,48 @@
 
 4つとも Obsidian vault にデータを読み書きする前提で、vault 内のパスは `vault.paths.env` という**唯一のレジストリファイル**経由で解決する（vault の再編成をしても Skill 本文を書き換えずに済む設計）。
 
+## 3つの使い方（重いものほど賢い）
+
+| | 必要なもの | できること |
+|---|---|---|
+| **① ポータブル版** | ブラウザだけ | [portable/es-coach-portable.md](portable/es-coach-portable.md) をコピーして ChatGPT / Claude / Gemini に貼るだけ。ES 添削だけを一般的な就活の型ベースで行う。まず試すならここ |
+| **② plugin 版** | Claude Code | `/plugin` で 4 skill を一括インストール。vault の設定だけ必要 |
+| **③ clone 版** | Claude Code + git | 自分で改造したい人向け。中身は ② と同じ |
+
+② と ③ は Obsidian vault にデータが蓄積され、添削履歴・企業分析・面接対策が繋がっていく。
+
+### ① ポータブル版（インストール不要）
+
+[portable/es-coach-portable.md](portable/es-coach-portable.md) の中身をコピーして、お使いの AI に貼り付けるだけ。
+
+できないこと：過去の添削履歴との横断チェック、企業理念との突き合わせ、あなたの経験素材との紐付け、字数の機械カウント。
+それらが要るなら ② へ。
+
+### ② plugin 版（Claude Code、推奨）
+
+```
+/plugin marketplace add jiayi-ThE-CREATOR/es-coach-skills
+/plugin install shukatsu@es-coach-skills
+```
+
+インストール後、vault のパス設定のために一度だけセットアップを走らせる：
+
+```bash
+bash ~/.claude/plugins/cache/es-coach-skills/shukatsu/*/setup.sh
+```
+
+（1回目は設定ファイル `~/.config/shukatsu-skills/vault.paths.env` を作って止まる。
+`VAULT_ROOT` をあなたの vault のパスに直して、もう一度同じコマンドを実行する）
+
+plugin 版の skill は `/shukatsu:es-coach` のように名前空間付きで起動する。
+
 ## 必要なもの
 
 - [Claude Code](https://claude.com/claude-code)（Skills 機能）
 - Obsidian（または同等の Markdown vault）
 - Python 3（`tools/count_chars.py` と `tools/experience_inventory_sync.py` の実行に必要。`pyyaml` が要る）
 
-## セットアップ
+## ③ clone 版（自分で改造したい人向け）
 
 ```bash
 # 1. クローン
@@ -101,7 +136,9 @@ es-coach-skills/
 │   ├── count_chars.py               ES 字数・語数カウンタ（LLM の目測を使わない）
 │   ├── experience_inventory_sync.py 添削ログから経験の使用状況を自動集計
 │   └── vault_paths.py               vault.paths.env の解析器
+├── portable/es-coach-portable.md    ポータブル版（コピペで動く単一ファイル）
 ├── examples/                        架空データによるサンプル出力（上表）
+├── .claude-plugin/                  plugin / marketplace マニフェスト
 ├── seed/全行業共通.md               初期の蒸留知識（公開情報ベース。setup.sh が配置）
 ├── setup.sh                         フォルダ作成・seed 配置・skill リンク（冪等）
 ├── vault.paths.example.env          vault パスレジストリのテンプレート

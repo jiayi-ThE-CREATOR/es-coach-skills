@@ -19,13 +19,46 @@
 
 四者都以读写 Obsidian vault 为前提,vault 内的路径统一经由 `vault.paths.env` 这一**唯一注册表文件**解析(即使 vault 目录重新整理,也不用改 Skill 正文)。
 
+## 三种用法(越重越聪明)
+
+| | 需要什么 | 能做什么 |
+|---|---|---|
+| **① 便携版** | 一个浏览器 | 把 [portable/es-coach-portable.md](portable/es-coach-portable.md) 复制粘贴进 ChatGPT / Claude / Gemini。只做 ES 批改,依据是通用的就活写法。想先试试就从这里开始 |
+| **② plugin 版** | Claude Code | 用 `/plugin` 一次装好 4 个 skill,只需手动配 vault 路径 |
+| **③ clone 版** | Claude Code + git | 想自己改的人用。内容和 ② 相同 |
+
+② 和 ③ 会把数据沉淀在你自己的 Obsidian vault 里,批改历史、企业分析、面试对策会互相连起来。
+
+### ① 便携版(免安装)
+
+把 [portable/es-coach-portable.md](portable/es-coach-portable.md) 的内容复制,粘贴到你已经在用的任意 AI 里。
+
+做不到的事:跨历史批改的横向检查、与企业理念的比对、与你本人经历素材的关联、机器数字数。需要这些就用 ②。
+
+### ② plugin 版(Claude Code,推荐)
+
+```
+/plugin marketplace add jiayi-ThE-CREATOR/es-coach-skills
+/plugin install shukatsu@es-coach-skills
+```
+
+装好后跑一次安装脚本,把 skill 指向你的 vault:
+
+```bash
+bash ~/.claude/plugins/cache/es-coach-skills/shukatsu/*/setup.sh
+```
+
+(第一次会生成 `~/.config/shukatsu-skills/vault.paths.env` 然后停下。把 `VAULT_ROOT` 改成你的 vault 路径,再跑一遍同样的命令)
+
+plugin 版的 skill 带命名空间,用 `/shukatsu:es-coach` 这样调用。
+
 ## 前置依赖
 
 - [Claude Code](https://claude.com/claude-code)(Skills 功能)
 - Obsidian(或同等的 Markdown vault)
 - Python 3(运行 `tools/count_chars.py` 和 `tools/experience_inventory_sync.py` 需要,依赖 `pyyaml`)
 
-## 安装步骤
+## ③ clone 版(想自己改的人)
 
 ```bash
 # 1. 克隆仓库
@@ -101,7 +134,9 @@ es-coach-skills/
 │   ├── count_chars.py               ES 字数/词数计数器(不依赖 LLM 目测)
 │   ├── experience_inventory_sync.py 从批改日志自动汇总经历使用情况
 │   └── vault_paths.py               vault.paths.env 的解析器
+├── portable/es-coach-portable.md    便携版(可直接复制粘贴的单文件)
 ├── examples/                        虚构数据的样例输出(见上表)
+├── .claude-plugin/                  plugin / marketplace 清单
 ├── seed/全行業共通.md               初始蒸馏知识(公开信息,由 setup.sh 放置)
 ├── setup.sh                         建目录、放 seed、链接 skill(可反复执行)
 ├── vault.paths.example.env          vault 路径注册表模板

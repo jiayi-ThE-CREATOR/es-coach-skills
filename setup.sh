@@ -27,7 +27,20 @@ FAILED=0
 # ---------------------------------------------------------------- 1. env
 step "1. vault.paths.env"
 
-ENV_FILE="$REPO_ROOT/vault.paths.env"
+# plugin としてインストールされている場合、リポジトリ本体は更新のたびに差し替わる
+# キャッシュディレクトリなので、設定は ~/.config/shukatsu-skills/ に置く（更新で消えない）
+case "$REPO_ROOT" in
+  */.claude/plugins/cache/*)
+    IS_PLUGIN=1
+    ENV_FILE="$HOME/.config/shukatsu-skills/vault.paths.env"
+    [ "$CHECK_ONLY" = 1 ] || mkdir -p "$(dirname "$ENV_FILE")"
+    ;;
+  *)
+    IS_PLUGIN=0
+    ENV_FILE="$REPO_ROOT/vault.paths.env"
+    ;;
+esac
+[ "$IS_PLUGIN" = 1 ] && ok "plugin としてインストール済み（設定は ${ENV_FILE}）"
 if [ ! -f "$ENV_FILE" ]; then
   if [ "$CHECK_ONLY" = 1 ]; then
     err "vault.paths.env が未作成（example からコピーが必要）"
@@ -35,7 +48,7 @@ if [ ! -f "$ENV_FILE" ]; then
   else
     cp "$REPO_ROOT/vault.paths.example.env" "$ENV_FILE"
     ok "vault.paths.example.env → vault.paths.env を作成した"
-    warn "この後 vault.paths.env を開き、VAULT_ROOT をあなたの Obsidian vault の実パスに書き換えてから、もう一度 ./setup.sh を実行してください"
+    warn "この後 vault.paths.env を開き、VAULT_ROOT をあなたの Obsidian vault の実パスに書き換えてから、もう一度 setup.sh を実行してください"
     printf '\n  %s\n\n' "\$EDITOR \"$ENV_FILE\""
     exit 0
   fi
@@ -95,6 +108,10 @@ fi
 # ------------------------------------------------------------- 4. skills
 step "4. ~/.claude/skills への symlink"
 
+if [ "$IS_PLUGIN" = 1 ]; then
+  ok "plugin 版なので symlink は不要（skill は plugin として登録済み。/shukatsu:es-coach 等で起動）"
+else
+
 SKILLS_DIR="$HOME/.claude/skills"
 [ "$CHECK_ONLY" = 1 ] || mkdir -p "$SKILLS_DIR"
 
@@ -116,6 +133,8 @@ for skill in es-coach shukatsu-distill kigyou-report mensetsu-report; do
     ln -s "$src" "$dst" && ok "$skill をリンクした"
   fi
 done
+
+fi
 
 # ------------------------------------------------------------- 5. python
 step "5. Python"
@@ -147,14 +166,16 @@ else
   warn "一部に警告あり（上を確認してください）"
 fi
 
-cat <<'NEXT'
+if [ "$IS_PLUGIN" = 1 ]; then PFX="/shukatsu:"; else PFX="/"; fi
+
+cat <<NEXT
 
   次の一歩：Claude Code で
 
-    /shukatsu-distill ingest   内定者の体験談・YouTube・記事を素材として入れる（まずここから）
-    /kigyou-report <企業名>     志望企業の分析レポートを作る
-    /es-coach                  ES を添削してもらう
-    /mensetsu-report <企業名>   面接前の対策レポートを作る
+    ${PFX}shukatsu-distill ingest   内定者の体験談・YouTube・記事を素材として入れる（まずここから）
+    ${PFX}kigyou-report <企業名>     志望企業の分析レポートを作る
+    ${PFX}es-coach                  ES を添削してもらう
+    ${PFX}mensetsu-report <企業名>   面接前の対策レポートを作る
 
   蒸留知識が seed（source_count: 0）のままだと、添削は一般論ベースになります。
   ingest を数回回すと「内定者の傾向」を根拠にした添削に変わります。

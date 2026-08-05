@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "es-coach-skills",
+  "description": "日本就活（ES・企業分析・面接）の Claude Code skill セット",
+  "owner": {
+    "name": "jiayi-ThE-CREATOR"
+  },
+  "plugins": [
+    {
+      "name": "shukatsu",
+      "description": "日本就活の ES 添削・知識蒸留・企業分析レポート・面接対策レポートの 4 skill。ES を内定者パターンと突き合わせて添削し、企業分析と面接準備まで繋げる。",
+      "category": "productivity",
+      "source": "./",
+      "homepage": "https://github.com/jiayi-ThE-CREATOR/es-coach-skills"
+    }
+  ]
+}

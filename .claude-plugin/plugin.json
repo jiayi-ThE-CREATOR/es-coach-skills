@@ -1,0 +1,17 @@
+{
+  "name": "shukatsu",
+  "description": "日本就活（新卒採用）の ES・面接対策 skill セット。内定者の体験談から成功パターンを蒸留し、それを根拠に ES を添削し、企業分析レポート・面接対策レポートまで一貫して作る。データは自分の Obsidian vault に蓄積される。",
+  "version": "1.0.0",
+  "author": {
+    "name": "jiayi-ThE-CREATOR"
+  },
+  "homepage": "https://github.com/jiayi-ThE-CREATOR/es-coach-skills",
+  "keywords": [
+    "shukatsu",
+    "job-hunting",
+    "japan",
+    "entry-sheet",
+    "interview",
+    "obsidian"
+  ]
+}
