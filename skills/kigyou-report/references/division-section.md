@@ -6,9 +6,20 @@
 
 ## X.0 部門全体概観図（必ずセクション冒頭に配置）
 
-情報源は **対象企業の公式「Divisions」「Our Businesses」「Teams」ページ**を優先（例：GS なら https://www.goldmansachs.com/japan/careers/divisions、MS なら corp.morganstanley.com/careers/divisions、Amazon なら amazon.jobs/content/en/teams）。
+情報源は **対象企業の公式「Divisions」「Our Businesses」「Teams」ページ**を優先する。
 
-JS レンダリングで取得できない場合は、`curl` で生 HTML を取得し、`grep -oE '[ア-ン・ー]+部門[^"<>]*'` 等で部門名と説明を抽出する。
+> [!danger] 生 HTML をコンテキストに読み込まない
+> 企業サイトの生 HTML は **1 ページ 60〜75 万字（20 万トークン超）**あり、そのうち可読テキストは **1% 程度**。残りは `<script>`・インライン CSS・ハッシュ化された class 名で、しかもトークン効率が通常の文章の半分（実測 3.3 字/token 対 5.7 字/token）。**1 ページ読むだけでコンテキストが埋まり、以降の調査も執筆もできなくなる。**
+>
+> したがって：`curl` の出力をそのまま読まない。`WebFetch` の生 HTML を貼らない。どうしても `curl` を使うなら **シェル側で `grep -oE` 等に必ずパイプし、抽出結果だけを受け取る**（出力が数百行を超えそうなら諦めて別手段へ）。
+
+### 公式ページの取得手順（上から順に試し、成功した時点で止める）
+
+1. **URL は検索で特定する。ハードコードした URL を使わない** — 企業サイトは改編が多く、古い URL は失効する（実際、以前ここに書いていた GS の 3 つの URL は現在すべて本文を取得できない）。
+   `WebSearch` に `<企業名 英語> divisions our businesses careers` 等を投げ、現行の部門一覧ページを特定する。
+2. **`WebFetch` でそのページを読む**（基本手段）。サーバ側で本文抽出されるので、生 HTML を持ち込まずに済む。
+3. **`defuddle parse "<URL>" --md`**。ただし defuddle は「記事本文」を探す設計で、**カード型の企業マーケティングページでは 0 字を返すことがある**。数百字未満なら失敗とみなして次へ。
+4. どれも取れない場合は、**WebSearch のスニペット＋ IR 資料（有価証券報告書・アニュアルレポートの事業セグメント）から部門構成を再構成**し、出典コールアウトに「公式部門ページを取得できず、IR 資料と報道から再構成」と明記する。
 
 ### 構造モデルは業界ごとに選ぶ（最重要ルール）
 
@@ -217,19 +228,13 @@ X.0 の後で、各部門ごとに **1 つの独立サブセクション**を作
 - **改変禁止**：引用文の語句を改変せず、省略する場合は `...` を使う
 - **複数ソース**：同じ部門に対し公式・業界紙・社員ブログなど複数ソースがあれば、全て引用ブロックで並列
 
-## 取得すべき公式ページ（例：GS の場合）
+## どのページを取りに行くか
 
-```bash
-# defuddle で並列取得
-defuddle parse "https://www.goldmansachs.com/what-we-do/our-businesses" --md
-defuddle parse "https://www.goldmansachs.com/what-we-do/investment-banking" --md
-defuddle parse "https://www.goldmansachs.com/careers/our-firm/engineering" --md
-defuddle parse "https://www.goldmansachs.com/careers/our-firm/global-investment-research" --md
-defuddle parse "https://www.goldmansachs.com/careers/our-firm/operations" --md
-# 他、各部門の専用ページ
-```
+**ページ数に上限を設ける**：まず「部門一覧ページ 1 枚」を取り、そこに各部門の説明が 1〜2 段落あるなら**それで足りる**。個別部門ページまで取りに行くのは、一覧の記述が薄すぎて業務内容が書けない部門だけ、**多くても 3 ページまで**。「全部門の専用ページを揃える」ことを目的にしない——部門が 10 ある企業で全ページ取ると、それだけで調査予算を使い切る。
 
-日本語公式ページは JS レンダリングで取得困難な場合がある → **グローバル英語ページを優先**。
+取得は上の「公式ページの取得手順」に従う（WebSearch で URL 特定 → `WebFetch`）。**URL をここに書き溜めない**（企業サイトの改編で必ず腐る）。
+
+日本語公式ページは取得困難な場合がある → **グローバル英語ページを優先**。
 
 ## 部門サブセクションの後に必須
 
