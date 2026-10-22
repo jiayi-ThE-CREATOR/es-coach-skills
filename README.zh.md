@@ -13,7 +13,7 @@
 | Skill | 作用 |
 |-------|------|
 | `es-coach` | 对话式批改 ES(事实核查 → 评价 → 修改循环 → 定稿签字)。以蒸馏知识、企业分析报告、本人过往经历为依据 |
-| `shukatsu-distill` | 三种模式:`ingest`(录入内定者经验谈)/ `distill`(提炼成功模式)/ `grill`(反向面试,挖掘并素材化本人经历) |
+| `shukatsu-distill` | 五种模式:`ingest`(录入内定者经验谈)/ `distill`(提炼成功模式)/ `grill`(反向面试,挖掘并素材化本人经历)/ `review`(复核自动收集的候选模式,只把有用的收进知识库)/ `log`(记录本人的选考结果和实际被问到的问题) |
 | `kigyou-report` | 把指定企业整理成固定 12 章节的结构化报告(部门地图、企业理念、ES 攻略法等) |
 | `mensetsu-report` | 指定企业×部门×面试阶段后,整合蒸馏知识、企业分析报告、已提交的 ES 与过往面试记录,输出预设问题库/回答骨架/反问/复发弱点的赛前准备报告(对话式模拟面试已废止,由本 skill 接替) |
 
@@ -104,6 +104,8 @@ pip install pyyaml
 /shukatsu-distill ingest      录入内定者经验谈/文章作为素材
 /shukatsu-distill distill     从素材中提炼成功模式,写入蒸馏知识
 /shukatsu-distill grill       以反向面试的形式挖掘你自己的经历并素材化
+/shukatsu-distill review      复核自动收集的候选模式,只保留有用的
+/shukatsu-distill log         每次面试后记录本人的选考结果
 /kigyou-report <企业名>        生成企业分析报告
 /es-coach                     对话式批改 ES
 /mensetsu-report <企业名>      生成面试前阅读的面试对策报告
@@ -125,7 +127,7 @@ pip install pyyaml
 es-coach-skills/
 ├── skills/
 │   ├── es-coach/SKILL.md            ES 对话批改(Phase 0~8 流程)
-│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill 三种模式
+│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill / review / log 五种模式
 │   ├── kigyou-report/
 │   │   ├── SKILL.md                 企业分析报告生成(固定 12 章节)
 │   │   └── references/              格式规约与部门章节模板(按需读取)

@@ -13,7 +13,7 @@ A four-skill set for [Claude Code](https://claude.com/claude-code) that automate
 | Skill | Role |
 |-------|------|
 | `es-coach` | Interactive ES critique (fact-check → 5-axis scoring → revision loop → sign-off). Grounded in distilled knowledge, the company report, and your own past episodes |
-| `shukatsu-distill` | Three modes: `ingest` (bring in offer-holders' accounts), `distill` (extract success patterns), `grill` (reverse-interview to turn your own experience into material) |
+| `shukatsu-distill` | Five modes: `ingest` (bring in offer-holders' accounts), `distill` (extract success patterns), `grill` (reverse-interview to turn your own experience into material), `review` (vet auto-collected candidate patterns before they enter the knowledge base), `log` (record your own selection results and the questions you were actually asked) |
 | `kigyou-report` | Turns a named company into a fixed 12-section structured report (org/division map, company philosophy, ES tactics, etc.) |
 | `mensetsu-report` | Given company × division × interview stage, merges distilled knowledge, the company report, your submitted ES and past interview records into one prep sheet: question bank, answer outlines, reverse questions, recurring weaknesses (replaces the retired interactive mock interview) |
 
@@ -104,6 +104,8 @@ After setup, start with `/shukatsu-distill ingest` in Claude Code (feed it offer
 /shukatsu-distill ingest      Bring in offer-holders' accounts/articles as raw material
 /shukatsu-distill distill     Extract success patterns from material into distilled knowledge
 /shukatsu-distill grill       Reverse-interview to dig up and materialize your own experience
+/shukatsu-distill review      Vet auto-collected candidate patterns; keep only the useful ones
+/shukatsu-distill log         Record your own selection results right after each interview
 /kigyou-report <company>      Generate a company research report
 /es-coach                     Interactive ES critique
 /mensetsu-report <company>    Generate a pre-interview prep report
@@ -125,7 +127,7 @@ After setup, start with `/shukatsu-distill ingest` in Claude Code (feed it offer
 es-coach-skills/
 ├── skills/
 │   ├── es-coach/SKILL.md            Interactive ES critique (Phase 0–8 flow)
-│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill (3 modes)
+│   ├── shukatsu-distill/SKILL.md    ingest / distill / grill / review / log (5 modes)
 │   ├── kigyou-report/
 │   │   ├── SKILL.md                 Company report generation (fixed 12 sections)
 │   │   └── references/              Formatting rules & division-section template (read on demand)
