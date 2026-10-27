@@ -1,0 +1,7 @@
+{
+  "name": "member-fetch",
+  "private": true,
+  "type": "module",
+  "description": "就活サイトの会員限定ページを、専用のログイン済みブラウザプロファイルで取得する",
+  "dependencies": { "playwright": "1.62.1" }
+}
